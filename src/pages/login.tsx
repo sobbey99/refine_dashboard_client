@@ -43,10 +43,7 @@ export const Login: React.FC = () => {
   return (
     <Box
       component="div"
-      sx={{
-        background: `radial-gradient(50% 50% at 50% 50%, #63386A 0%, #310438 100%)`,
-        backgroundSize: "cover",
-      }}
+      sx={{backgroundColor: "#FCFCFC"}}
     >
       <Container
         component="main"
@@ -67,7 +64,7 @@ export const Login: React.FC = () => {
           }}
         >
           <div>
-            <img src="./refine.svg" alt="Refine Logo" />
+            <img src={yariga} alt="yariga Logo" />
           </div>
           <Box mt={4}>
             <GoogleButton />
