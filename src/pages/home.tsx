@@ -1,8 +1,19 @@
-import React from 'react'
+import { Box, Typography, Stack} from "@pankod/refine-mui"
+import { useList } from "@pankod/refine-core"
+
+import {
+  PieChart,
+  PropertyReferrals,
+  TotalRevenue,
+  PropertyCard,
+  TopAgent
+} from "components"
 
 const home = () => {
   return (
-    <div>home</div>
+    <Box>
+      
+    </Box>
   )
 }
 
