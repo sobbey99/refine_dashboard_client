@@ -7,6 +7,7 @@ import { Box, Typography, Stack, TextField, Select, MenuItem} from "@pankod/refi
 import { useNavigate } from "@pankod/refine-react-router-v6"
 
 import { PropertyCard, CustomButton } from "components"
+import { useMemo } from "react"
 
 
 const AllProperties = () => {
@@ -25,6 +26,26 @@ const AllProperties = () => {
   } = useTable()
 
  const allProperties = data?.data ?? []
+
+ const currentPrice = sorter.find((item) => item.field === "price")?.order
+
+ const toggleSort = (field: string) => {
+  setSorter([{
+    field,
+    order: currentPrice === "asc" ? "desc" : "asc"
+  }])
+ }
+
+ const currentFilterValues = useMemo(() => {
+    const logicalFilters = filters.flatMap((item) => (
+      "field" in item ? item : []
+    ))
+
+    return {
+      title: logicalFilters.find((item) => item.field === "title")?.value || "",
+      propertyType: logicalFilters.find((item) => item.field === "propertyType")?.value || "",
+    }
+ }, [filters])
 
  if(isLoading) {
   return <Typography>Loading...</Typography>
@@ -50,8 +71,8 @@ const AllProperties = () => {
               sm: 0
             }}>
               <CustomButton 
-              title={`Sort price`}
-              handleClick={() => {}}
+              title={`Sort price ${currentPrice === "asc" ? "↑" : "↓"}`}
+              handleClick={() => toggleSort("price")}
               backgroundColor="#475be8"
               color="#fcfcfc"
               />
@@ -60,8 +81,16 @@ const AllProperties = () => {
               variant="outlined"
               color="info"
               placeholder="Search by title"
-              value=""
-              onChange={() => {}}
+              value={currentFilterValues.title}
+              onChange={(e) => {
+                setFilters([
+                  {
+                    field: "title",
+                    operator: "contains",
+                    value: e.currentTarget.value ? e.currentTarget.value : undefined
+                  }
+                ])
+              }}
               />
               <Select
               variant="outlined"
@@ -72,10 +101,24 @@ const AllProperties = () => {
                 "aria-label": "Without label"
               }}
               defaultValue=""
-              value=""
-              onChange={() => {}}
+              value={currentFilterValues.propertyType}
+              onChange={(e) => {
+                setFilters([
+                  {
+                    field: "propertyType",
+                    operator: "eq",
+                    value: e.target.value
+                  }
+                ], "replace")
+              }}
               >
                 <MenuItem value="">All</MenuItem>
+                {["Apartment", "Villa", "Farmhouse", "Condos", "Townhouse", "Duplex", "Studio", "Chalet"].map((type) => {
+                  const lowerCaseValue = type.toLowerCase()
+                  return (
+                    <MenuItem value={lowerCaseValue} key={type}>{type}</MenuItem>
+                  )
+                })}
               </Select>
             </Box>
           </Box>
@@ -155,7 +198,7 @@ const AllProperties = () => {
               "aria-label": "Without label"
             }}
             defaultValue={10}
-            onChange={() => {}}
+            onChange={(e) => setPageSize(e.target.value ? Number(e.target.value) : 10)}
             >
               {[10, 20, 30, 40, 50].map((size) => (
                 <MenuItem key={size} value={size}>Show {size}</MenuItem>
